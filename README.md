@@ -50,14 +50,18 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
    - Drop redundant index column (`Unnamed: 0`)
    - Identify numerical vs categorical columns
 
-3. **Exploratory Data Analysis (EDA)**
+3. **Feature Engineering**
+   - Strip units and convert `Ram` from string (e.g. `"8GB"`) to integer
+   - Strip units and convert `Weight` from string (e.g. `"1.37kg"`) to float
+
+4. **Exploratory Data Analysis (EDA)**
    - Explore unique values across all features
-   - Analyse distribution of prices, RAM, storage, and screen types
+   - Price distribution histogram (`sns.displot`)
+   - Count plots for `Company`, `TypeName`, `Ram`, and `OpSys`
+   - Average price per company bar chart
+   - Laptop type distribution count plot
 
-4. **Feature Engineering** *(in progress)*
-   - Parse screen resolution, CPU speed, RAM size, and weight into numerical values
-
-5. **Price Prediction** *(in progress)*
+5. **Price Prediction** *(planned — not yet started)*
    - Build and evaluate regression models
 
 ---
