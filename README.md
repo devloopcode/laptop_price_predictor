@@ -33,7 +33,7 @@ The dataset (`laptop_data.csv`) contains **1,303 laptop records** with the follo
 | `Weight`           | Laptop weight in kg                              |
 | `Price`            | Price (target variable)                          |
 
-**Companies represented:** Apple, HP, Acer, Asus, Dell, Lenovo, MSI, Microsoft, Razer, Samsung, and more.
+**Companies represented:** Apple, HP, Acer, Asus, Dell, Lenovo, Chuwi, MSI, Microsoft, Toshiba, Huawei, Xiaomi, Vero, Razer, Mediacom, Samsung, Google, Fujitsu, and LG.
 
 ---
 
@@ -43,23 +43,28 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 
 1. **Data Loading & Inspection**
    - Load CSV with `pandas`
-   - Inspect shape, columns, and data types
-   - Check for null values and duplicate rows (29 duplicates found)
+   - Inspect shape (`1303 × 12`), columns, and data types
+   - Check for null values (none found) and duplicate rows (29 duplicates found)
+   - Detailed `df.info()` summary
 
 2. **Data Cleaning**
-   - Drop redundant index column (`Unnamed: 0`)
+   - Drop redundant index column (`Unnamed: 0`) → shape becomes `1303 × 11`
    - Identify numerical vs categorical columns
 
 3. **Feature Engineering**
-   - Strip units and convert `Ram` from string (e.g. `"8GB"`) to integer
-   - Strip units and convert `Weight` from string (e.g. `"1.37kg"`) to float
+   - Strip units and convert `Ram` from string (e.g. `"8GB"`) to `int32`
+   - Strip units and convert `Weight` from string (e.g. `"1.37kg"`) to `float32`
+   - Verify conversions with `df.info()`
 
 4. **Exploratory Data Analysis (EDA)**
    - Explore unique values across all features
-   - Price distribution histogram (`sns.displot`)
-   - Count plots for `Company`, `TypeName`, `Ram`, and `OpSys`
-   - Average price per company bar chart
-   - Laptop type distribution count plot
+   - **Price distribution** — histogram via `sns.displot`
+   - **Count plots** for `Company`, `TypeName`, `Ram`, and `OpSys`
+   - **Average price per company** — bar chart (`sns.barplot`)
+   - **Laptop type distribution** — count plot
+   - **Average price per laptop type** — bar chart
+   - **Screen size vs price** — scatter plot (`sns.scatterplot`)
+   - **Screen resolution distribution** — value counts
 
 5. **Price Prediction** *(planned — not yet started)*
    - Build and evaluate regression models
@@ -116,10 +121,13 @@ jupyter notebook laptop_price_predicted.ipynb
 
 - The dataset has **no missing values** across all 11 columns.
 - **29 duplicate rows** were identified.
-- RAM values range from **2GB to 64GB**.
+- RAM values range from **2GB to 64GB**, with 9 distinct values.
 - Prices span a wide range, reflecting the variety of budget to premium laptops.
-- Brands covered include **19 different manufacturers**.
+- **19 manufacturers** are represented: Apple, HP, Acer, Asus, Dell, Lenovo, Chuwi, MSI, Microsoft, Toshiba, Huawei, Xiaomi, Vero, Razer, Mediacom, Samsung, Google, Fujitsu, and LG.
 - **6 laptop types** are present: Ultrabook, Notebook, Netbook, Gaming, 2-in-1 Convertible, and Workstation.
+- Screen sizes range from **10.1" to 18.4"** across 18 distinct values.
+- **9 operating systems** are represented, including Windows 10, macOS, Linux, Chrome OS, and others.
+- Screen resolutions show a wide variety, with **40 distinct resolution/panel combinations**.
 
 ---
 
