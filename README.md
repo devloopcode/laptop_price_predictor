@@ -58,6 +58,10 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 - **Screen Resolution** — Parse `ScreenResolution` into separate `X_res` and `Y_res` integer columns
 - **PPI (Pixels Per Inch)** — Compute pixel density: `√(X_res² + Y_res²) / Inches`
 - **CPU Categorisation** — Extract and simplify CPU names into categories: `Intel Core i3`, `Intel Core i5`, `Intel Core i7`, `Other Intel Processor`, and `AMD Processor`
+- **Memory / Storage** — Parse the composite `Memory` column (e.g. `"256GB SSD + 1TB HDD"`) into two layers:
+  - Split on `+` to separate primary and secondary storage
+  - Create binary indicator columns for each storage type (`HDD`, `SSD`, `Hybrid`, `Flash Storage`) per layer
+  - Extract numeric capacity values (converting `TB` → `1000`) into `first` and `Second` integer columns
 - **Feature Dropping** — Remove low-correlation or redundant features (`TouchScreen`, `X_res`, `Y_res`, `Inches`, `Cpu`) after deriving new features
 
 ### 4. Exploratory Data Analysis (EDA)
@@ -70,11 +74,13 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 - **TouchScreen vs price** — bar chart
 - **IPS panel vs price** — bar chart
 - **CPU category vs price** — bar chart
+- **RAM distribution & average price per RAM tier** — count plot + bar chart
+- **Storage type distribution** — value counts of `Memory` column
 - **Screen resolution distribution** — value counts
 - **Correlation heatmap** — `sns.heatmap` of all numeric features
 - **Feature-target correlations** — correlation of each feature with `Price` (computed before and after PPI engineering to validate improvement)
 
-### 5. Price Prediction *(in progress)*
+### 5. Price Prediction *(upcoming)*
 - Build and evaluate regression models
 
 ---
@@ -147,7 +153,7 @@ jupyter notebook laptop_price_predicted.ipynb
 
 - [x] Data loading & inspection
 - [x] Data cleaning
-- [x] Feature engineering (Ram, Weight, TouchScreen, IPS, PPI, CPU)
+- [x] Feature engineering (Ram, Weight, TouchScreen, IPS, PPI, CPU, Memory/Storage)
 - [x] Exploratory data analysis with visualisations
 - [x] Correlation analysis & feature selection
 - [ ] Build regression models (Linear Regression, Random Forest, etc.)
