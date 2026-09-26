@@ -1,6 +1,6 @@
 # 💻 Laptop Price Predictor
 
-A machine learning project that performs **exploratory data analysis (EDA)**, **feature engineering**, and **price prediction** on a dataset of 1,303 laptops. The project cleans and transforms laptop specifications to uncover insights and prepare features for predicting laptop prices.
+A machine learning project that performs **exploratory data analysis (EDA)** and **feature engineering** on a dataset of 1,303 laptops. The project cleans and transforms raw laptop specifications into meaningful numerical features, uncovers pricing insights through visualisations, and prepares a modelling-ready dataset for price prediction.
 
 ---
 
@@ -62,6 +62,8 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
   - Split on `+` to separate primary and secondary storage
   - Create binary indicator columns for each storage type (`HDD`, `SSD`, `Hybrid`, `Flash Storage`) per layer
   - Extract numeric capacity values (converting `TB` → `1000`) into `first` and `Second` integer columns
+  - Combine layers into final aggregate columns: `HDD`, `SSD`, `Hybrid`, `Flash_Storage` (total capacity per type)
+  - Drop all intermediate columns (`first`, `Second`, `Layer_*`, `ScreenResolution`)
 - **Feature Dropping** — Remove low-correlation or redundant features (`TouchScreen`, `X_res`, `Y_res`, `Inches`, `Cpu`) after deriving new features
 
 ### 4. Exploratory Data Analysis (EDA)
@@ -80,7 +82,29 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 - **Correlation heatmap** — `sns.heatmap` of all numeric features
 - **Feature-target correlations** — correlation of each feature with `Price` (computed before and after PPI engineering to validate improvement)
 
-### 5. Price Prediction *(upcoming)*
+### 5. Final Engineered Feature Set
+
+After all transformations, the dataset contains **15 columns**:
+
+| Feature          | Type        | Correlation with Price |
+|------------------|-------------|------------------------|
+| `Company`        | Categorical | —                      |
+| `TypeName`       | Categorical | —                      |
+| `Ram`            | int32       | **0.743**              |
+| `Memory`         | object      | —                      |
+| `Gpu`            | Categorical | —                      |
+| `OpSys`          | Categorical | —                      |
+| `Weight`         | float32     | 0.210                  |
+| `Price`          | float64     | 1.000 *(target)*       |
+| `IPS`            | int64       | 0.252                  |
+| `PPI`            | float64     | **0.473**              |
+| `CPU_name`       | Categorical | —                      |
+| `HDD`            | int64       | −0.096                 |
+| `SSD`            | int64       | **0.671**              |
+| `Hybrid`         | int64       | 0.008                  |
+| `Flash_Storage`  | int64       | —                      |
+
+### 6. Price Prediction *(next step)*
 - Build and evaluate regression models
 
 ---
@@ -88,11 +112,12 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 ## 🛠️ Tech Stack
 
 - **Python 3.13**
-- **pandas** — data manipulation
+- **pandas** — data manipulation & cleaning
 - **NumPy** — numerical operations
 - **Matplotlib** — data visualisation
-- **Seaborn** — statistical plots
+- **Seaborn** — statistical plots & heatmaps
 - **Jupyter Notebook** — interactive development environment (via Anaconda/conda)
+- **scikit-learn** *(planned)* — model training & evaluation
 
 ---
 
@@ -147,6 +172,17 @@ jupyter notebook laptop_price_predicted.ipynb
 - The engineered **PPI** feature shows a stronger correlation with price than raw resolution or screen size alone.
 - After CPU categorisation, **Intel Core i7** laptops have the highest average price, followed by i5 and i3.
 
+### Top Feature Correlations with Price (post-engineering)
+
+| Feature | Correlation |
+|---------|-------------|
+| Ram     | **0.743**   |
+| SSD     | **0.671**   |
+| PPI     | **0.473**   |
+| IPS     | 0.252       |
+| Weight  | 0.210       |
+| HDD     | −0.096      |
+
 ---
 
 ## 🗺️ Roadmap
@@ -166,9 +202,3 @@ jupyter notebook laptop_price_predicted.ipynb
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
-
----
-
-## 📄 Licence
-
-This project is open-source and available under the [MIT Licence](https://opensource.org/licenses/MIT).
