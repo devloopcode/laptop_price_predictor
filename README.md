@@ -64,11 +64,17 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
   - Extract numeric capacity values (converting `TB` → `1000`) into `first` and `Second` integer columns
   - Combine layers into final aggregate columns: `HDD`, `SSD`, `Hybrid`, `Flash_Storage` (total capacity per type)
   - Drop all intermediate columns (`first`, `Second`, `Layer_*`, `ScreenResolution`)
-- **Feature Dropping** — Remove low-correlation or redundant features (`TouchScreen`, `X_res`, `Y_res`, `Inches`, `Cpu`) after deriving new features
+  - Drop `Hybrid` and `Flash_Storage` due to near-zero correlation with price
+- **GPU Brand** — Extract GPU manufacturer brand (`Intel`, `Nvidia`, `AMD`) from the full `Gpu` description; remove the single `ARM` GPU entry as an outlier; drop the original `Gpu` column
+- **OS Categorisation** — Simplify the 9 distinct operating systems into 3 categories:
+  - `Windows` (Windows 10, Windows 7, Windows 10 S)
+  - `Mac` (macOS, Mac OS X)
+  - `Other` (Linux, Chrome OS, No OS, Android)
+- **Feature Dropping** — Remove low-correlation or redundant features (`TouchScreen`, `X_res`, `Y_res`, `Inches`, `Cpu`, `Gpu`, `Hybrid`, `Flash_Storage`) after deriving new features
 
 ### 4. Exploratory Data Analysis (EDA)
-- **Price distribution** — histogram via `sns.displot`
-- **Count plots** for `Company`, `TypeName`, `Ram`, `OpSys`, `TouchScreen`, `IPS`, and `CPU_name`
+- **Price distribution** — histogram via `sns.displot`; log-transformed price distribution to check skewness
+- **Count plots** for `Company`, `TypeName`, `Ram`, `OpSys`, `TouchScreen`, `IPS`, `CPU_name`, and `Gpu_brand`
 - **Average price per company** — bar chart (`sns.barplot`)
 - **Laptop type distribution** — count plot
 - **Average price per laptop type** — bar chart
@@ -79,30 +85,30 @@ The notebook (`laptop_price_predicted.ipynb`) covers:
 - **RAM distribution & average price per RAM tier** — count plot + bar chart
 - **Storage type distribution** — value counts of `Memory` column
 - **Screen resolution distribution** — value counts
+- **GPU brand distribution & median price per GPU brand** — count plot + bar chart
+- **OS category distribution & average price per OS** — count plot + bar chart (Mac: ₹83,340 > Windows: ₹63,388 > Other: ₹31,497)
+- **Weight distribution & weight vs price** — histogram with KDE + scatter plot
 - **Correlation heatmap** — `sns.heatmap` of all numeric features
 - **Feature-target correlations** — correlation of each feature with `Price` (computed before and after PPI engineering to validate improvement)
 
 ### 5. Final Engineered Feature Set
 
-After all transformations, the dataset contains **15 columns**:
+After all transformations, the dataset contains **13 columns**:
 
 | Feature          | Type        | Correlation with Price |
 |------------------|-------------|------------------------|
 | `Company`        | Categorical | —                      |
 | `TypeName`       | Categorical | —                      |
 | `Ram`            | int32       | **0.743**              |
-| `Memory`         | object      | —                      |
-| `Gpu`            | Categorical | —                      |
 | `OpSys`          | Categorical | —                      |
 | `Weight`         | float32     | 0.210                  |
 | `Price`          | float64     | 1.000 *(target)*       |
-| `IPS`            | int64       | 0.252                  |
-| `PPI`            | float64     | **0.473**              |
+| `IPS`            | int64       | 0.253                  |
+| `PPI`            | float64     | **0.475**              |
 | `CPU_name`       | Categorical | —                      |
-| `HDD`            | int64       | −0.096                 |
+| `HDD`            | int64       | −0.097                 |
 | `SSD`            | int64       | **0.671**              |
-| `Hybrid`         | int64       | 0.008                  |
-| `Flash_Storage`  | int64       | —                      |
+| `Gpu_brand`      | Categorical | —                      |
 
 ### 6. Price Prediction *(next step)*
 - Build and evaluate regression models
@@ -162,15 +168,18 @@ jupyter notebook laptop_price_predicted.ipynb
 - **29 duplicate rows** were identified.
 - RAM values range from **2 GB to 64 GB**, with 9 distinct values.
 - Prices span a wide range, reflecting the variety of budget to premium laptops.
+- The price distribution is **right-skewed**; a log transformation produces a more normal distribution.
 - **19 manufacturers** are represented, with Apple, Dell, and Razer commanding the highest average prices.
 - **6 laptop types** are present: Ultrabook, Notebook, Netbook, Gaming, 2-in-1 Convertible, and Workstation.
 - Screen sizes range from **10.1″ to 18.4″** across 18 distinct values.
-- **9 operating systems** are represented, including Windows 10, macOS, Linux, Chrome OS, and others.
-- Screen resolutions show a wide variety, with **40 distinct resolution/panel combinations**.
 - **Touchscreen laptops** have a noticeably higher average price than non-touchscreen laptops.
 - **IPS panel** laptops also tend to be priced higher.
 - The engineered **PPI** feature shows a stronger correlation with price than raw resolution or screen size alone.
 - After CPU categorisation, **Intel Core i7** laptops have the highest average price, followed by i5 and i3.
+- **GPU brands** show clear price differentiation: Nvidia GPUs command the highest median price, followed by Intel and AMD.
+- **Mac** laptops average ₹83,340, significantly above **Windows** (₹63,388) and **Other** OS (₹31,497).
+- A single **ARM** GPU entry was removed as an outlier.
+- **Hybrid** and **Flash Storage** columns were dropped due to negligible correlation with price (0.008 and ~0 respectively).
 
 ### Top Feature Correlations with Price (post-engineering)
 
@@ -178,10 +187,10 @@ jupyter notebook laptop_price_predicted.ipynb
 |---------|-------------|
 | Ram     | **0.743**   |
 | SSD     | **0.671**   |
-| PPI     | **0.473**   |
-| IPS     | 0.252       |
+| PPI     | **0.475**   |
+| IPS     | 0.253       |
 | Weight  | 0.210       |
-| HDD     | −0.096      |
+| HDD     | −0.097      |
 
 ---
 
@@ -189,9 +198,10 @@ jupyter notebook laptop_price_predicted.ipynb
 
 - [x] Data loading & inspection
 - [x] Data cleaning
-- [x] Feature engineering (Ram, Weight, TouchScreen, IPS, PPI, CPU, Memory/Storage)
+- [x] Feature engineering (Ram, Weight, TouchScreen, IPS, PPI, CPU, Memory/Storage, GPU brand, OS category)
 - [x] Exploratory data analysis with visualisations
 - [x] Correlation analysis & feature selection
+- [x] Feature dropping (Hybrid, Flash_Storage, TouchScreen, X_res, Y_res, Inches, Cpu, Gpu)
 - [ ] Build regression models (Linear Regression, Random Forest, etc.)
 - [ ] Model evaluation & comparison (R², MAE, RMSE)
 - [ ] Hyperparameter tuning
